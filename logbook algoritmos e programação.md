@@ -119,20 +119,14 @@ Atualize a cada commit (troque ⬜ por ✅).
 | 1 | Registros dos Ciclos 01, 02, 03 e 04 | 16/11 | ✅ | ✅ |
 | 1 | Campo 01 — Instrumento de entrada | 16/11 | ✅ | ✅ |
 | 1 | Campo 02 — Aprofundamento | 16/11 | ✅ | ✅ |
-=======
-| 1 | Identificação | 16/11 | ⬜ | ⬜ |
-| 1 | Registros dos Ciclos 01, 02, 03 e 04 | 16/11 | ⬜ | ⬜ |
-| 1 | Campo 01 — Instrumento de entrada | 16/11 | ⬜ | ⬜ |
-| 1 | Campo 02 — Aprofundamento | 16/11 | ⬜ | ⬜ |
->>>>>>> b754231bd8512620dfb1b30e03c1c8cfd24a175c
-| 2 | Registros dos Ciclos 05, 06, 07 e 08 | 21/11 | ⬜ | ⬜ |
-| 2 | Checkpoint Conceitual | 21/11 | ⬜ | ⬜ |
-| 2 | Campo 03 — Execução e desvios | 21/11 | ⬜ | ⬜ |
-| 2 | Campo 04 — Interação com IA | 21/11 | ⬜ | ⬜ |
-| 3 | Registros dos Ciclos 09, 10, 11 e 12 | 26/11 | ⬜ | ⬜ |
-| 3 | Campo 05 — Revisão por pares nº 1 e nº 2 | 26/11 | ⬜ | ⬜ |
-| 3 | Campo 06 — Próximos passos | 26/11 | ⬜ | ⬜ |
-| 3 | Campo 07 — Evolução conceitual | 26/11 | ⬜ | ⬜ |
+| 2 | Registros dos Ciclos 05, 06, 07 e 08 | 21/11 | ✅ | ✅ |
+| 2 | Checkpoint Conceitual | 21/11 | ✅ | ✅ |
+| 2 | Campo 03 — Execução e desvios | 21/11 | ✅ | ✅ |
+| 2 | Campo 04 — Interação com IA | 21/11 | ✅ | ✅ |
+| 3 | Registros dos Ciclos 09, 10, 11 e 12 | 26/11 | ✅ | ✅ |
+| 3 | Campo 05 — Revisão por pares nº 1 e nº 2 | 26/11 | ✅ | ✅ |
+| 3 | Campo 06 — Próximos passos | 26/11 | ✅ | ✅ |
+| 3 | Campo 07 — Evolução conceitual | 26/11 | ✅ | ✅ |
 | 🏁 | Defesa Técnica | 18/11 | ⬜ | — |
 
 ---
@@ -557,8 +551,8 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 
 | | |
 |---|---|
-| **Nome do estudante** | _…_ |
-| **Data de realização** | _…_ |
+| **Nome do estudante** | Heitor Barboza |
+| **Data de realização** | 19/11/2026 |
 | **Unidade curricular** | Algoritmos e Programação |
 | **Professor(a)** | Rondineli Seba Salomão |
 
@@ -602,42 +596,49 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 *AV Qualis — Grupo 2 | Sábado 21/11, 23h59*
 
 **3a. O que descobri que mudou minha compreensão do problema (mínimo 2 achados, com objeto de conhecimento associado):**
-1. _…_ — *Objeto de conhecimento:* _…_
-2. _…_ — *Objeto de conhecimento:* _…_
-3. _…_ *(opcional)*
+
+1. Acoplamento entre o índice da lista e a identidade do registro: Descobri que calcular chaves primárias com len(lista) + 1 (e até mesmo max(item.id) + 1) não garante unicidade temporal em memória, pois a exclusão de registros intermediários ou do último elemento causa reatribuição de IDs e faz tarefas antigas apontarem para novos membros ou projetos. — *Objeto de conhecimento:* Estruturas de dados mutáveis em memória (list), modelagem com @dataclass e controle de estado de identificadores únicos.
+
+2. Inconsistência de comparação entre instâncias de Enum e strings brutas (str): Descobri que comparar diretamente um membro de Enum (como Situacao.CONCLUIDA) com a string digitada ou armazenada ("CONCLUIDA") avalia como False silenciosamente sem disparar exceção, fazendo filtros e relatórios ignorarem tarefas concluídas. — *Objeto de conhecimento:* Tipagem estática/dinâmica em Python, enumerações (enum.Enum) e operadores relacionais (==).
+
+3. Vulnerabilidade de exclusão em cascata não tratada: Descobri que remover um Membro ou Projeto diretamente da lista sem verificar dependências quebra a integridade referencial do domínio, gerando referências órfãs nos atributos membro_id e projeto_id das instâncias de Tarefa. — *Objeto de conhecimento:* Integridade referencial em coleções relacionadas e expressões geradoras com avaliação de curto-circuito (any()).
 
 **3b. Desvio em relação ao Campo 02 (ao menos 1 — causa técnica):**
-- **Desvio:** _…_
-- **Causa técnica:** _…_
+
+- **Desvio:** No Campo 02, planejei resolver a colisão de identificadores substituindo len(lista) + 1 por max(item.id for item in lista) + 1 e executar 8 cenários de teste manuais. Na prática, a abordagem com max() falhou ao remover o último registro cadastrado (reutilizando o ID recém-excluído) e exigiu mais horas de refatoração do que as 2h30 estimadas inicialmente.
+
+- **Causa técnica:** O cálculo max(lista) + 1 depende apenas do estado atual da coleção em memória, não preservando o histórico de chaves já emitidas após um pop() ou remove(), além de lançar ValueError: max() iterable argument is empty quando a lista está vazia.
 
 **3c. Decisão de ajuste (ao menos 1) com justificativa e fonte:**
-- **Decisão:** _…_
-- **Fonte:** _…_
 
-**Objeto de conhecimento mobilizado nesta decisão:** _…_
+- **Decisão:** Implementei contadores incrementais independentes por entidade (proximo_id_membro, proximo_id_projeto, proximo_id_tarefa) em vez de derivar o ID do tamanho ou do máximo da lista, combinados com verificação de dependência via any(t.membro_id == codigo for t in tarefas) antes de permitir remover_membro().
+
+- **Fonte:** RAMALHO, Luciano. Python Fluente: Programação Clara, Concisa e Eficiente (Capítulo sobre Estruturas de Dados e dataclasses) e Documentação Oficial do Python 3 (Built-in Functions — any() e max()).
+
+**Objeto de conhecimento mobilizado nesta decisão:** Controle de estado em memória, estruturas de dados (list e @dataclass), expressões geradoras e validação de integridade referencial.
 
 ### 🧩 CAMPO 04 — Interação com IA
 *AV Qualis — Grupo 2 | Sábado 21/11, 23h59 | OBRIGATÓRIO*
 
 > **Obrigatório e avaliado. Print sem análise crítica = devolução imediata. Reproduzir a IA sem questionamento = reprovado.**
 
-**4a. Ferramenta:** _…_  **Data:** _DD/MM/AAAA_
+**4a. Ferramenta:** Gemini  **Data:** 19/11/2026
 
 **4b. Pergunta formulada (transcrita integralmente):**
 
-> _…_
+> "No meu CRUD em Python eu tenho três listas em memória: membros, projetos e tarefas, usando @dataclass. Quando excluo um membro da lista membros, as tarefas antigas ficam com um membro_id que não existe mais, e quando cadastro um novo membro usando len(membros) + 1, ele pega o mesmo ID do que foi apagado. Como posso estruturar a geração de IDs e a exclusão de membros de forma segura e pythônica?"
 
 **4c. Resposta da IA (resumida em parágrafo):**
 
-> _…_
+> A IA sugeriu abandonar o cálculo baseado em len(membros) + 1 e adotar duas abordagens alternativas: utilizar itertools.count(1) ou variáveis contadoras dedicadas por entidade para gerar chaves primárias monotônicas que nunca retrocedem após exclusões. Para o problema de exclusão de membros com tarefas associadas, a IA apresentou um trecho de código utilizando any(t.membro_id == id_membro for t in tarefas) para bloquear a remoção quando houver vínculo ativo, além de sugerir opcionalmente a exclusão em cascata (apagar automaticamente todas as tarefas do membro) ou substituir as listas por dicionários indexados por ID (dict[int, Membro]) para busca em tempo constante $O(1)$.
 
 **4d. O que aceitei — com referência ao objeto de conhecimento do componente:**
 
-> _…_
+> Aceitei o uso de contadores sequenciais independentes por entidade (proximo_id) e a verificação de integridade referencial com a função embutida any() sobre uma expressão geradora (any(t.membro_id == codigo for t in tarefas)). Essa solução se ancora diretamente nos objetos de conhecimento de estruturas de dados em memória, expressões geradoras com avaliação de curto-circuito (parando a varredura na primeira ocorrência encontrada) e cláusulas de guarda (early return), eliminando colisões de chaves primárias e impedindo referências órfãs sem alterar a assinatura das minhas funções.
 
 **4e. O que questionei ou descartei — com argumento técnico ou fonte:**
 
-> _…_
+> Questionei e descartei duas sugestões da IA após testar o comportamento no meu código: primeiro, descartei a exclusão em cascata automática das tarefas ao remover um membro, pois pela regra de negócio do meu sistema de projetos (documentada no Ciclo 04), apagar histórico de tarefas concluídas ou em andamento distorce as métricas de horas e taxa de conclusão de relatorio_geral(); o correto para o domínio é bloquear a exclusão enquanto houver vínculo. Segundo, descartei a migração imediata de list para dict[int, Membro] neste estágio porque o escopo dos Ciclos 05 a 07 exigia justamente dominar iteração, fatiamento (tarefas[-3:]) e ordenação (sorted() com lambda) sobre listas, deixando a busca indexada por dicionário para a evolução do Ciclo 08 conforme a arquitetura planejada em Pense em Python (Downey, cap. 10 e 11).
 
 ## 🟠 CICLO 05 — 09/09 — Condicionais aninhadas e operadores lógicos
 
@@ -652,13 +653,33 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 </details>
 
 #### Registro do Ciclo 05 — 09/09
-1. **Desafio do ciclo (em 1 frase):** _…_
-2. **O que implementei (commits / arquivos / links):** _…_
-3. **Objeto(s) de conhecimento mobilizado(s):** _…_
-4. **Desvio ou erro encontrado + causa técnica:** _…_
-5. **Decisão de ajuste + fonte:** _…_
-6. **Feedback recebido e o que mudei:** _…_
-7. **Próximo passo:** _…_
+1. **Desafio do ciclo (em 1 frase):** 
+
+Combinar operadores lógicos (and, or, not) e condicionais aninhadas para validar múltiplas regras de negócio simultâneas no cadastro e na atualização de status das tarefas.
+
+2. **O que implementei (commits / arquivos / links):** 
+
+Atualização das funções criar_tarefa(), atualizar_situacao() e filtrar_tarefas() no arquivo crud.py do repositório codigo-crud-rondinelli (feat(crud): implementa condicionais aninhadas e operadores logicos nas validacoes).
+
+3. **Objeto(s) de conhecimento mobilizado(s):** 
+
+Estruturas condicionais aninhadas (if dentro de if/elif/else), operadores lógicos (and, or, not), precedência de operadores booleanos e validação composta de invariantes de domínio.
+
+4. **Desvio ou erro encontrado + causa técnica:** 
+
+Ao validar a atualização de situação de uma tarefa para CONCLUIDA, uma condição escrita sem parênteses combinando or e and (if not tarefa or situacao == "CONCLUIDA" and tarefa.horas_estimadas <= 0:) acabou permitindo que tarefas com horas_estimadas == 0 passassem em outros fluxos por conta da maior precedência do operador and sobre or. Causa técnica: avaliação de curto-circuito e precedência implícita (and avaliado antes de or), somada à falta de aninhamento separando primeiro a existência do registro (if not tarefa:) da regra de transição de estado.
+
+5. **Decisão de ajuste + fonte:** 
+
+Separei a verificação de existência da entidade em uma cláusula de guarda externa (if not tarefa:) e aninhei as validações de transição de estado usando parênteses explícitos nas expressões compostas (if (nova_situacao == Situacao.CONCLUIDA.value) and (tarefa.horas_estimadas <= 0):). Validei com caso de teste: entrada (id_tarefa=99, situacao="CONCLUIDA") -> esperado: erro de tarefa não encontrada -> obtido: mensagem de bloqueio sem exceção; entrada (id_tarefa=1, horas=0, situacao="CONCLUIDA") -> esperado: bloqueio por horas inválidas -> obtido: bloqueio confirmado. Fonte: DOWNEY, Allen B. Pense em Python (Capítulo 5 — Expressões booleanas e condicionais aninhadas) e Documentação Oficial do Python 3 (Operator precedence).
+
+6. **Feedback recebido e o que mudei:** 
+
+Durante a atividade de nivelamento entre pares, observou-se que mensagens genéricas como "Dados inválidos" dificultavam identificar qual condição havia falhado; desmembrei os blocos if/elif aninhados para retornar diagnósticos específicos (membro inexistente, projeto inexistente ou horas fora do intervalo permitido).
+
+7. **Próximo passo:** 
+
+Estruturar os laços de repetição (while e for) no menu principal e nas rotinas de listagem/relatório para evitar encerramentos abruptos e controlar o fluxo de navegação.
 
 ## 🟠 CICLO 06 — 30/09 — Devolutiva da P1 + repetição: `for`, `while`, `break`, `continue`
 
@@ -672,13 +693,33 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 </details>
 
 #### Registro do Ciclo 06 — 30/09
-1. **Desafio do ciclo (em 1 frase):** _…_
-2. **O que implementei (commits / arquivos / links):** _…_
-3. **Objeto(s) de conhecimento mobilizado(s):** _…_
-4. **Desvio ou erro encontrado + causa técnica:** _…_
-5. **Decisão de ajuste + fonte:** _…_
-6. **Feedback recebido (inclui devolutiva da P1) e o que mudei:** _…_
-7. **Próximo passo:** _…_
+1. **Desafio do ciclo (em 1 frase):** 
+
+Estruturar os laços de repetição while e for com controle de fluxo (break e continue) para tornar o menu interativo resiliente e processar listagens e filtros sem loops infinitos.
+
+2. **O que implementei (commits / arquivos / links):** 
+
+Refatoração do loop principal menu() com while True, implementação de laços for com enumerate() nas listagens de membros, projetos e tarefas e uso de continue para ignorar entradas vazias no arquivo crud.py (refactor(crud): aplica lacos while e for com controle de fluxo).
+
+3. **Objeto(s) de conhecimento mobilizado(s):** 
+
+Laços de repetição indeterminados (while), laços determinados sobre iteráveis (for), instruções de desvio (break e continue), função enumerate() e critérios de parada.
+
+4. **Desvio ou erro encontrado + causa técnica:**
+
+Na rotina de cadastro em lote de tarefas via while, ao capturar um ValueError na leitura de horas_estimadas, o laço entrava em repetição infinita reexibindo a mesma mensagem sem avançar. Causa técnica: ausência de atualização da variável de controle ou uso incorreto de continue antes de solicitar nova entrada ao usuário, mantendo a condição de parada inalterada.
+
+5. **Decisão de ajuste + fonte:**
+
+Escolhi while True com break explícito apenas quando o usuário escolhe a opção "0" (Sair) ou fornece uma entrada válida na sub-rotina de leitura numérica, reservando o laço for exclusivamente para percorrer coleções finitas (membros, projetos, tarefas) onde o número de iterações é conhecido. Fonte: DOWNEY, Allen B. Pense em Python (Capítulo 7 — Iteração) e Documentação Oficial do Python 3 (More Control Flow Tools — break and continue).
+
+6. **Feedback recebido (inclui devolutiva da P1) e o que mudei:** 
+
+Na devolutiva da P1, identifiquei dois erros conceituais: (a) alterar uma lista enquanto ela está sendo percorrida por um laço for, o que faz o iterador pular o elemento seguinte após um .remove(); e (b) confundir o efeito de continue (que salta apenas para a próxima iteração do laço atual) com break (que encerra o laço inteiro). Apliquei essa correção imediatamente no CRUD, garantindo que buscas e remoções localizem primeiro a referência do objeto para só depois removê-lo fora da iteração direta.
+
+7. **Próximo passo:**
+
+Aprofundar o armazenamento e manipulação das coleções em memória utilizando operações avançadas de listas (sorted(), fatiamento e list comprehensions).
 
 ## 🟠 CICLO 07 — 07/10 — Listas: armazenamento e iteração
 
@@ -692,13 +733,33 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 </details>
 
 #### Registro do Ciclo 07 — 07/10
-1. **Desafio do ciclo (em 1 frase):** _…_
-2. **O que implementei (commits / arquivos / links):** _…_
-3. **Objeto(s) de conhecimento mobilizado(s):** _…_
-4. **Desvio ou erro encontrado + causa técnica:** _…_
-5. **Decisão de ajuste + fonte:** _…_
-6. **Feedback recebido e o que mudei:** _…_
-7. **Próximo passo:** _…_
+1. **Desafio do ciclo (em 1 frase):** 
+
+Gerenciar as coleções de Membro, Projeto e Tarefa em listas dinâmicas aplicando ordenação, fatiamento e compreensão de listas sem efeitos colaterais de referência mutável.
+
+2. **O que implementei (commits / arquivos / links):**
+
+Implementação de ordenação por prioridade/prazo com sorted(..., key=lambda t: t.horas_estimadas), exibição das últimas tarefas cadastradas via fatiamento (tarefas[-3:]) e filtros com list comprehensions em crud.py (feat(crud): adiciona ordenacao, fatiamento e filtros em listas).
+
+3. **Objeto(s) de conhecimento mobilizado(s):**
+
+Estrutura de dados list (alocação dinâmica e mutabilidade), métodos e funções de lista (append(), remove(), sorted(), len()), fatiamento (slicing [-3:]), expressões lambda e list comprehensions.
+
+4. **Desvio ou erro encontrado + causa técnica:** 
+
+Ao gerar uma visualização ordenada das tarefas no relatório, utilizar tarefas.sort() modificou a ordem cronológica original da lista global, e uma tentativa de backup feita por atribuição simples (copia = tarefas) sofreu as mesmas alterações. Causa técnica: list.sort() opera in-place (mutando o objeto original) e a atribuição = em Python cria apenas um novo alias (referência) apontando para o mesmo endereço de memória da lista, não uma cópia independente.
+
+5. **Decisão de ajuste + fonte:** 
+
+Substituí tarefas.sort() pela função embutida sorted(tarefas, key=...), que preserva a lista original intacta e devolve uma nova lista ordenada, e passei a utilizar cópia rasa explícita (tarefas.copy() ou tarefas[:]) sempre que necessário isolar subconjuntos de exibição. Fonte: RAMALHO, Luciano. Python Fluente (Capítulo sobre Listas e Referências de Objetos) e DOWNEY, Allen B. Pense em Python (Capítulo 10 — Listas).
+
+6. **Feedback recebido e o que mudei:** 
+
+Durante a revisão de código, confirmou-se que o armazenamento em listas de objetos @dataclass é adequado para manter a ordem de inserção e percorrer registros sequencialmente nos relatórios, desde que funções de consulta não provoquem mutações colaterais nas coleções principais.
+
+7. **Próximo passo:** 
+
+Otimizar as operações de busca e consulta por ID introduzindo estruturas de mapeamento chave-valor (dict) e preparando o sistema para o lote de dados com defeito.
 
 ## 🟠 CICLO 08 — 14/10 — Busca/consulta e introdução a dicionários e matrizes
 
@@ -713,13 +774,33 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 </details>
 
 #### Registro do Ciclo 08 — 14/10
-1. **Desafio do ciclo (em 1 frase):** _…_
-2. **O que implementei (commits / arquivos / links):** _…_
-3. **Objeto(s) de conhecimento mobilizado(s):** _…_
-4. **Desvio ou erro encontrado + causa técnica:** _…_
-5. **Decisão de ajuste + fonte:** _…_
-6. **Feedback recebido e o que mudei:** _…_
-7. **Próximo passo:** _…_
+1. **Desafio do ciclo (em 1 frase):** 
+
+Substituir buscas lineares repetitivas por estruturas chave-valor (dict) e normalizar chaves e tipos de entrada para resistir a consultas com dados defeituosos.
+
+2. **O que implementei (commits / arquivos / links):** 
+
+Criação de índices auxiliares e despacho de menu baseado em dicionários (opcoes = {"1": cadastrar_membro, ...}), além do endurecimento de localizar_por_id() e busca por nome em crud.py (feat(crud): otimiza busca e despacho de menu com dicionarios).
+
+3. **Objeto(s) de conhecimento mobilizado(s):** 
+
+Dicionários (dict — tabelas hash, mapeamento chave -> valor), métodos de dicionário (.get(), .items(), .values()), busca linear $O(n)$ vs. acesso indexado $O(1)$ e normalização de strings (.strip().lower()).
+
+4. **Desvio ou erro encontrado + causa técnica:** 
+
+Ao testar a busca de membros e projetos com o lote de dados defeituoso, consultas por ID falharam quando o dado veio como string ("2" em vez de 2) e buscas por nome falharam diante de diferenças de capitalização ou espaços extras (ex.: " ana silva " vs. "Ana Silva"), além de KeyError ao acessar chaves ausentes diretamente com colchetes dicionario[chave]. Causa técnica: tipagem estrita na comparação de igualdade ("2" == 2 retorna False), sensibilidade a caixa (case-sensitivity) em strings e ausência de acesso seguro via .get().
+
+5. **Decisão de ajuste + fonte:** 
+
+Modelei os registros e índices de consulta rápida como mapeamentos chave-valor (id -> objeto), substituí o acesso direto d[chave] por d.get(chave) e apliquei sanitização obrigatória (int(str(entrada).strip()) para IDs e .strip().lower() para buscas textuais) antes de qualquer consulta. Fonte: DOWNEY, Allen B. Pense em Python (Capítulo 11 — Dicionários) e Documentação Oficial do Python 3 (Mapping Types — dict).
+
+6. **Feedback recebido e o que mudei:** 
+
+Com a introdução dos dicionários para o despacho do menu e mapeamento de entidades por ID, eliminei cadeias extensas de if/elif e reduzi a complexidade das verificações de integridade referencial entre Tarefa, Membro e Projeto.
+
+7. **Próximo passo:** 
+
+Implementar as operações completas de atualização (Update) e exclusão (Delete) com tratamento de registros inexistentes e realizar a primeira revisão por pares no código do meu colega de revisão, Felipe Couto Lamar.
 
 ---
 
@@ -755,14 +836,33 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
   - Feedback ao colega: **específico e respeitoso** (o que está bom, o que quebrou, como reproduzir, sugestão).
 </details>
 
-#### Registro do Ciclo 09 — 21/10
-1. **Desafio do ciclo (em 1 frase):** _…_
-2. **O que implementei (commits / arquivos / links):** _…_
-3. **Objeto(s) de conhecimento mobilizado(s):** _…_
-4. **Desvio ou erro encontrado + causa técnica:** _…_
-5. **Decisão de ajuste + fonte:** _…_
-6. **Feedback recebido e o que mudei:** _…_
-7. **Próximo passo:** _…_
+1. **Desafio do ciclo (em 1 frase):** 
+
+Consolidar as operações de atualização (`Update`) e exclusão (`Delete`) nas entidades `Membro`, `Projeto` e `Tarefa`, garantindo integridade referencial e mutação segura das listas em memória.
+
+2. **O que implementei (commits / arquivos / links):** 
+
+Implementação das funções `atualizar_situacao()`, `editar_tarefa()`, `remover_membro()`, `remover_projeto()` e `remover_tarefa()` em `crud.py` no repositório `https://github.com/heitorbarboza08/crud-e-logbook-rondinelli`.
+
+3. **Objeto(s) de conhecimento mobilizado(s):** 
+
+Operações completas de persistência em memória (CRUD — *Create, Read, Update, Delete*), integridade referencial (restrição de chave estrangeira antes de exclusão), mutação segura de listas (remoção fora de iteração direta) e validação de pré-condições com retorno antecipado (*early return*).
+
+4. **Desvio ou erro encontrado + causa técnica:** 
+
+Ao implementar a exclusão em lote de tarefas concluídas percorrendo diretamente a lista com `for t in tarefas: if t.situacao == Situacao.CONCLUIDA.value: tarefas.remove(t)`, quando havia duas tarefas concluídas consecutivas, a segunda tarefa não era removida. *Causa técnica:* mutação da lista durante a iteração direta — ao remover o elemento no índice `i`, o elemento seguinte desloca-se para `i`, mas o ponteiro interno do iterador `for` avança para `i + 1`, pulando o item deslocado.
+
+5. **Decisão de ajuste + fonte:** 
+
+Substituí a remoção *in-place* dentro do laço `for` pela reconstrução filtrada da coleção via *list comprehension* (`tarefas[:] = [t for t in tarefas if t.situacao != Situacao.CONCLUIDA.value]`), preservando a referência da lista global sem pular índices, além de bloquear a exclusão de `Membro` e `Projeto` caso `any(...)` detecte tarefas associadas. *Fonte:* DOWNEY, Allen B. *Pense em Python* (Capítulo 10 — Listas e mutação durante iteração) e Documentação Oficial do Python 3 (*Tutorial — Data Structures*).
+
+6. **Feedback recebido e o que mudei:** 
+
+Durante a primeira rodada de revisão por pares com Felipe Couto Lamar, identificamos que a tentativa de atualizar ou excluir um ID inexistente encerrava silenciosamente sem feedback claro ao usuário; adicionei mensagens explícitas de erro quando `localizar_por_id()` retorna `None` e validei a transição de `Situacao` contra os membros válidos do `Enum`.
+
+7. **Próximo passo:** 
+
+Refatorar o código monolítico em funções coesas com responsabilidades bem delimitadas e passagem explícita de parâmetros no Ciclo 10.
 
 ### 🧩 CAMPO 05 — Registro de Revisão por Pares
 *Adaptação do **Logbook do Time** (Apêndice C) para o CRUD individual. Documento atualizado pelo **revisor**. Cada decisão técnica relevante deve ter associado o objeto de conhecimento correspondente.*
@@ -775,47 +875,72 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 
 | | |
 |---|---|
-| **Autor do CRUD revisado** | _nome_ |
-| **Repositório revisado** | _link_ |
-| **Revisor** | _seu nome_ |
+| **Autor do CRUD revisado** | Felipe Couto Lamar |
+| **Repositório revisado** | https://github.com/felipecoutolamar-pixel/Projetos-Undb |
+| **Revisor** | Heitor França Barboza |
 | **Unidade curricular / Semestre** | Algoritmos e Programação · 2026.2 |
-| **Ciclo / data** | _Ciclo 09 · 21/10_ |
+| **Ciclo / data** | Ciclo 09 · 21/10 |
+
+**5a. AVANÇO DO PROCESSO DE REVISÃO — análise técnica de cada etapa:**
 
 **5a. AVANÇO DO PROCESSO DE REVISÃO — análise técnica de cada etapa:**
 
 | ETAPA DO PROCESSO | RESPONSÁVEL | PRAZO | STATUS | DESVIO / JUSTIFICATIVA |
 |---|---|---|---|---|
-| 1. _…_ | Revisor / Autor | _DD/MM_ | ☐ Concluída ☐ Em andamento ☐ Com desvio | _…_ |
-| 2. _…_ | Revisor / Autor | _DD/MM_ | ☐ Concluída ☐ Em andamento ☐ Com desvio | _…_ |
-| 3. _…_ | Revisor / Autor | _DD/MM_ | ☐ Concluída ☐ Em andamento ☐ Com desvio | _…_ |
-| 4. _…_ | Revisor / Autor | _DD/MM_ | ☐ Concluída ☐ Em andamento ☐ Com desvio | _…_ |
-| 5. _…_ | Revisor / Autor | _DD/MM_ | ☐ Concluída ☐ Em andamento ☐ Com desvio | _…_ |
+
+| 1. Clonagem e execução local do repositório do colega | Felipe Couto | 21/11 | ☑ Concluída ☐ Em andamento ☐ Com desvio | Executado em ambiente Python 3.12 sem dependências externas faltantes. |
+
+| 2. Execução do fluxo básico CRUD (Create, Read, Update, Delete) | Felipe Couto | 21/11 | ☑ Concluída ☐ Em andamento ☐ Com desvio | Operações principais funcionaram, mas o sistema apresentou falha ao tentar excluir registro inexistente. |
+
+| 3. Teste de integridade referencial e geração de chaves (IDs) | Felipe Couto | 21/11 | ☐ Concluída ☐ Em andamento ☑ Com desvio | Desvio detectado: exclusão seguida de novo cadastro gerou colisão de ID por uso de `len() + 1`. |
+
+| 4. Leitura estrutural do código-fonte e mapeamento de objetos de conhecimento | Felipe Couto |21/11 | ☑ Concluída ☐ Em andamento ☐ Com desvio | Verificado uso correto de listas e dicionários, porém sem tratamento de exceção `ValueError` em entradas numéricas. |
+
+| 5. Registro de achados e devolução de feedback técnico ao autor | Felipe Couto | 21/11 | ☑ Concluída ☐ Em andamento ☐ Com desvio | Feedback documentado com passos de reprodução e sugestões fundamentadas. |
 
 **5b. ANÁLISE DE INSUMOS E CRITÉRIOS DE QUALIDADE:**
 
 | RECURSO | QTDE PLANEJADA | QTDE UTILIZADA | VARIAÇÃO | JUSTIFICATIVA TÉCNICA |
 |---|---|---|---|---|
-| _…_ | _…_ | _…_ | _…_ | _…_ |
-| _…_ | _…_ | _…_ | _…_ | _…_ |
-| _…_ | _…_ | _…_ | _…_ | _…_ |
+
+| Casos de teste funcionais (CRUD completo) | 6 cenários | 6 cenários | 0 | Cobertura integral das 4 operações básicas mais consulta por ID e listagem vazia. |
+
+| Entradas de borda / dados defeituosos | 4 entradas | 5 entradas | +1 entrada | Adicionado teste extra de exclusão seguida de reinserção após observar cálculo de ID baseado no tamanho da lista. |
+
+| Arquivo de código-fonte do colega (`crud.py`) | 1 arquivo | 1 arquivo | 0 | Inspeção estática linha a linha das funções de cadastro, busca, atualização e remoção. |
 
 **5c. CONTROLE DE QUALIDADE:**
-- **Critério ou norma técnica:** _…_
-- **A solução atende?** ☐ Sim ☐ Parcialmente ☐ Não
+
+- **Critério ou norma técnica:** 
+
+Conformidade funcional das operações CRUD (Create, Read, Update, Delete), integridade de identificadores únicos e resiliência a entradas inválidas conforme os critérios do Protocolo AFP 2026.2.
+
+- **A solução atende?** ☐ Sim ☑ Parcialmente ☐ Não
 
 **5d. GESTÃO DE RISCOS:**
-- **Risco:** _…_
-- **Estratégia de mitigação:** _…_
+
+- **Risco:** 
+
+Diferença de versão do interpretador Python ou estrutura de pastas impedir a execução direta do script do colega durante a revisão.
+
+- **Estratégia de mitigação:** 
+
+Verificar previamente a estrutura do repositório no GitHub, rodar o código em terminal limpo via `python3` e inspecionar estaticamente o fluxo lógico antes dos testes interativos.
 
 **5e. RASTREABILIDADE DAS DECISÕES TÉCNICAS — COM VÍNCULO AO CONTEÚDO:**
 
 | DATA | DECISÃO TÉCNICA | RESP. | OBJETO DE CONHECIMENTO MOBILIZADO | FUNDAMENTAÇÃO / REFERÊNCIA |
 |---|---|---|---|---|
-| _DD/MM/AA_ | _…_ | _…_ | _…_ | _…_ |
-| _DD/MM/AA_ | _…_ | _…_ | _…_ | _…_ |
-| _DD/MM/AA_ | _…_ | _…_ | _…_ | _…_ |
-| _DD/MM/AA_ | _…_ | _…_ | _…_ | _…_ |
-| _DD/MM/AA_ | _…_ | _…_ | _…_ | _…_ |
+
+| 21/10/2026 | Recomendar substituição de `len(lista) + 1` por contador sequencial independente na geração de IDs | Revisor | Controle de estado, listas mutáveis e chaves primárias | Documentação Oficial do Python 3 (*Data Structures*) — remoção altera `len()` e causa duplicidade de chaves. |
+
+| 21/10/2026 | Recomendar validação com `try / except ValueError` nas leituras numéricas do menu e buscas por ID | Revisor | Tratamento de exceções e conversão explícita de tipos (`int()`) | Documentação Oficial do Python 3 (*Errors and Exceptions*) — evita interrupção abrupta (`crash`) em tempo de execução. |
+
+| 21/10/2026 | Recomendar verificação de existência antes de atualizar/excluir registro (`if registro is None:`) | Revisor | Estruturas condicionais, busca linear e cláusulas de guarda | DOWNEY, Allen B. *Pense em Python* (Cap. 5 — Condicionais) — previne `IndexError` ou falha silenciosa. |
+
+| 21/10/2026 | Recomendar bloqueio de exclusão de entidade-pai quando houver registros dependentes ativos | Revisor | Expressões geradoras (`any()`) e integridade referencial | Documentação Oficial do Python 3 (*Built-in Functions — any()*) — garante consistência entre entidades relacionadas. |
+
+| 21/10/2026 | Validar cálculo de métricas/relatórios quando a lista de registros estiver vazia (`len(lista) == 0`) | Revisor | Operadores aritméticos e prevenção de `ZeroDivisionError` | Documentação Oficial do Python 3 (*Built-in Exceptions — ZeroDivisionError*). |
 
 > **IMPORTANTE:** Decisão registrada sem objeto de conhecimento associado e sem referência é considerada **não rastreável** e não conta para a avaliação formativa. O vínculo entre processo e conteúdo é obrigatório em todas as decisões relevantes.
 
@@ -831,13 +956,33 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 </details>
 
 #### Registro do Ciclo 10 — 28/10
-1. **Desafio do ciclo (em 1 frase):** _…_
-2. **O que implementei (commits / arquivos / links):** _…_
-3. **Objeto(s) de conhecimento mobilizado(s):** _…_
-4. **Desvio ou erro encontrado + causa técnica:** _…_
-5. **Decisão de ajuste + fonte:** _…_
-6. **Feedback recebido e o que mudei:** _…_
-7. **Próximo passo:** _…_
+1. **Desafio do ciclo (em 1 frase):** 
+
+Modularizar o CRUD em funções coesas com responsabilidade única, parâmetros explícitos e retorno claro para eliminar duplicação de lógica e acoplamento de escopo.
+
+2. **O que implementei (commits / arquivos / links):** 
+
+Refatoração completa de `crud.py` separando a camada de entrada validada (`ler_inteiro()`, `ler_float()`, `ler_texto()`), funções auxiliares de busca (`localizar_por_id()`), operações de domínio (`cadastrar_membro()`, `cadastrar_projeto()`, `criar_tarefa()`, `atualizar_situacao()`, `remover_membro()`, `relatorio_geral()`) e controle de interface (`menu()`) (commit `refactor(crud): modulariza operacoes em funcoes coesas com parametros explicitos`).
+
+3. **Objeto(s) de conhecimento mobilizado(s):** 
+
+Modularização, definição de funções (`def`), parâmetros formais e argumentos reais, valores de retorno (`return`), escopo local vs. global (regra LEGB), princípio da responsabilidade única e despacho via dicionário de funções.
+
+4. **Desvio ou erro encontrado + causa técnica:** 
+
+Após extrair `ler_inteiro()` para uma função auxiliar e usá-la dentro de `criar_tarefa()`, a função `criar_tarefa()` passou a imprimir `"Tarefa criada com sucesso"` sem de fato adicionar o objeto à lista ou retorná-lo ao chamador em alguns fluxos de teste, além de gerar `UnboundLocalError` quando tentei incrementar o contador global `proximo_id_tarefa += 1` dentro da função. *Causa técnica:* regras de escopo em Python (LEGB) — atribuir valor a uma variável dentro de `def` faz o interpretador tratá-la como variável local antes da leitura (`+=`), e esquecer a instrução `return` faz a função devolver `None` implicitamente.
+
+5. **Decisão de ajuste + fonte:** 
+
+Encapsulei os contadores de ID e coleções em uma estrutura de estado passada explicitamente por parâmetro (ou retornando o novo ID atualizado pela função geradora), e garanti que toda função de consulta/validação retorne explicitamente o objeto encontrado ou `None`. *Fonte:* DOWNEY, Allen B. *Pense em Python* (Capítulo 3 — Funções e Capítulo 6 — Funções com resultado) e Documentação Oficial do Python 3 (*Execution model — Naming and binding*).
+
+6. **Feedback recebido e o que mudei:** 
+
+Na revisão por pares, Felipe apontou que antes da refatoração o bloco principal tinha mais de 180 linhas misturando `input()`, regras de negócio e `print()`; após dividir em funções pequenas, a leitura do fluxo principal caiu para cerca de 30 linhas e permitiu reutilizar `localizar_por_id()` em 4 operações diferentes sem repetir laços `for`.
+
+7. **Próximo passo:** 
+
+Implementar uma rotina recursiva aplicada ao domínio do projeto no Ciclo 11, analisando caso base, passo recursivo e pilha de execução.
 
 ## 🔵 CICLO 11 — 04/11 — Recursividade
 
@@ -853,35 +998,74 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 </details>
 
 #### Registro do Ciclo 11 — 04/11
-1. **Desafio do ciclo (em 1 frase):** _…_
-2. **O que implementei (commits / arquivos / links):** _…_
-3. **Objeto(s) de conhecimento mobilizado(s):** _…_
-4. **Desvio ou erro encontrado + causa técnica:** _…_
-5. **Decisão de ajuste + fonte:** _…_
-6. **Feedback recebido e o que mudei:** _…_
-7. **Próximo passo:** _…_
+1. **Desafio do ciclo (em 1 frase):** 
+
+Aplicar recursividade com caso base e passo de redução bem definidos para percorrer dependências/subtarefas encadeadas e gerar contagem hierárquica de horas estimadas.
+
+2. **O que implementei (commits / arquivos / links):** 
+
+Implementação da função recursiva `calcular_horas_recursivo(lista_tarefas, indice=0)` e da busca recursiva por ID `buscar_recursivo(colecao, id_alvo, indice=0)` em `crud.py` (commit `feat(crud): implementa calculo acumulado e busca recursiva com caso base explicito`).
+
+3. **Objeto(s) de conhecimento mobilizado(s):** 
+
+Recursividade direta, caso base (condição de parada), passo recursivo (redução do problema), pilha de chamadas (*call stack*), frame de execução e comparação de complexidade espacial entre abordagem recursiva ($O(n)$ na pilha) e iterativa ($O(1)$).
+
+4. **Desvio ou erro encontrado + causa técnica:** 
+
+Na primeira execução de `calcular_horas_recursivo(tarefas)`, o programa lançou `RecursionError: maximum recursion depth exceeded` ao passar uma lista vazia `[]` ou ao atingir o final da lista. *Causa técnica:* o caso base foi escrito como `if indice == len(lista_tarefas) - 1:`, o que falhava quando `len(lista_tarefas) == 0` (`indice` `0` nunca igualava `-1`, fazendo o índice crescer indefinidamente para `1, 2, 3...`).
+
+5. **Decisão de ajuste + fonte:** 
+
+Corrigi o caso base para `if indice >= len(lista_tarefas): return 0.0`, cobrindo tanto listas vazias quanto o alcance do limite superior da coleção, e documentei no código por que a versão iterativa (`sum(t.horas_estimadas for t in tarefas)`) continua preferível em produção devido ao limite padrão de pilha do Python (`sys.getrecursionlimit() == 1000`). *Fonte:* DOWNEY, Allen B. *Pense em Python* (Capítulo 5 — Recursividade e pilha de chamadas) e Documentação Oficial do Python 3 (*sys.getrecursionlimit*).
+
+6. **Feedback recebido e o que mudei:** 
+
+Compreendi que recursividade não deve ser forçada onde um laço `for` é mais seguro e econômico em memória, mas seu domínio é essencial para estruturas hierárquicas (como árvores de subtarefas dependentes ou diretórios); adicionei validação de entrada antes de iniciar a recursão.
+
+7. **Próximo passo:** 
+
+Realizar a refatoração final de qualidade de código (nomes, remoção de duplicações, validação de borda) no Ciclo 12 e executar a segunda revisão por pares.
 
 ### 🧩 CAMPO 06 — Próximos passos para a defesa
 *AV Qualis — Grupo 3 | Individual | Quinta 26/11, 23h59*
 
 **6a. Decisão técnica que defendo com plena autonomia — o que aprendi que é exclusivamente meu e não consigo transferir para nenhum colega:**
 
-> _…_
+> Defendo com plena autonomia a arquitetura de integridade referencial em memória adotada para relacionar `Membro`, `Projeto` e `Tarefa`: em vez de acoplar chaves primárias ao tamanho dinâmico das listas (`len(lista) + 1`) ou usar `max(id) + 1`, projetei contadores monotônicos independentes por entidade combinados com validação prévia de chaves estrangeiras (`localizar_por_id()`) na criação de tarefas e bloqueio ativo de exclusão (`any(t.membro == codigo for t in tarefas)`) em `remover_membro()`. Essa decisão nasceu da minha própria investigação sobre como bancos relacionais protegem chaves primárias e estrangeiras mesmo antes de existir persistência em disco.
 
 **6b. Lacuna técnica e plano de ação para saná-la:**
 
-- **Lacuna:** _…_
-- **Plano de ação (passos e datas):** _…_
+- **Lacuna:** 
+
+A persistência atual do CRUD ocorre exclusivamente em memória RAM (listas de `@dataclass`), fazendo com que todos os registros sejam perdidos ao encerrar o programa, além da ausência de testes automatizados (`pytest`/`unittest`) para validar regressões.
+
+- **Plano de ação (passos e datas):**
+  1. **Até 23/11:** 
+
+  Serializar as instâncias de `Membro`, `Projeto` e `Tarefa` em arquivos JSON (`json.dump` / `json.load` com `dataclasses.asdict()`) preservando os contadores `proximo_id`.
+
+  2. **Até 24/11:** 
+  
+  Criar um arquivo `test_crud.py` cobrindo os 8 casos de teste críticos (colisão de ID após exclusão, exclusão de membro com tarefa ativa, `ZeroDivisionError` em relatório vazio e entradas inválidas).
+
+  3. **Até 25/11:** 
+  
+  Revisar o código completo e executar todos os cenários antes da entrega final do Grupo 3 (26/11).
 
 **6c. Pergunta que a banca pode fazer — com resposta fundamentada (mínimo 5 linhas):**
 
-- **Pergunta:** _…_
+- **Pergunta:** *Se o seu sistema de gerenciamento de tarefas crescer para dezenas de milhares de registros em produção, qual gargalo estrutural existe na sua busca atual por ID (`localizar_por_id`) e como você evoluiria a estrutura de dados em Python para resolvê-lo sem quebrar a integridade referencial?*
 - **Resposta:**
 
-> _…_
+> Atualmente, a função `localizar_por_id()` realiza uma busca linear sequencial sobre listas de objetos (`for item in lista: if item.id == codigo:`), o que possui complexidade assintótica de tempo $O(n)$ no pior caso; como essa verificação é invocada tanto no cadastro de tarefas (checando `membro_id` e `projeto_id`) quanto nas rotinas de atualização e exclusão, o custo cresce linearmente a cada operação conforme o volume de dados aumenta. Para evoluir o sistema sem alterar as regras de negócio de integridade referencial, eu substituiria o armazenamento primário de listas por dicionários indexados pela chave primária (`membros_por_id: dict[int, Membro]`, `projetos_por_id: dict[int, Projeto]`), aproveitando a tabela hash nativa do Python (`dict`) para reduzir a busca por ID para complexidade média $O(1)$ via operador `in` ou `.get()`. Além disso, manteria um índice invertido auxiliar (`tarefas_por_membro: dict[int, list[int]]`) para que a verificação de dependência em `remover_membro()` também ocorra em tempo constante $O(1)$ sem precisar varrer toda a coleção de tarefas, preservando exatamente a mesma interface funcional das operações do CRUD.
 
-**Objeto de conhecimento mobilizado:** _…_
-**Fonte:** _…_
+**Objeto de conhecimento mobilizado:** 
+
+Estruturas de dados (listas vs. dicionários/tabelas hash), análise de complexidade de busca ($O(n)$ vs. $O(1)$), indexação por chave e integridade referencial.  
+
+**Fonte:** 
+
+DOWNEY, Allen B. *Pense em Python* (Capítulo 11 — Dicionários) e RAMALHO, Luciano. *Python Fluente* (Capítulo sobre Dicionários e Conjuntos — Tabelas Hash).
 
 ## 🔵 CICLO 12 — 11/11 — Refatoração e qualidade de código
 
@@ -899,58 +1083,85 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 </details>
 
 #### Registro do Ciclo 12 — 11/11
-1. **Desafio do ciclo (em 1 frase):** _…_
-2. **O que implementei (commits / arquivos / links):** _…_
-3. **Objeto(s) de conhecimento mobilizado(s):** _…_
-4. **Desvio ou erro encontrado + causa técnica:** _…_
-5. **Decisão de ajuste + fonte:** _…_
-6. **Feedback recebido e o que mudei:** _…_
-7. **Próximo passo:** _…_
+1. **Desafio do ciclo (em 1 frase):** 
+
+Refatorar o código do CRUD para elevar a legibilidade, padronizar nomes e garantir resistência total contra entradas vazias, valores limites e lotes de dados defeituosos.
+
+2. **O que implementei (commits / arquivos / links):** 
+
+Limpeza de código duplicado nas rotinas de listagem, padronização de identificadores em `snake_case` (PEP 8), sanitização de strings com `.strip()` e blindagem de todas as entradas numéricas e de borda em `crud.py` (commit `refactor(crud): aplica boas praticas PEP 8, sanitizacao e testes de borda`).
+
+3. **Objeto(s) de conhecimento mobilizado(s):** 
+
+Qualidade de código e refatoração (*clean code*), convenções de nomenclatura PEP 8 (`snake_case`, `PascalCase` para classes/Enums), sanitização de entradas (`str.strip()`), testes de casos de borda (valores mínimos, máximos, nulos e tipos inválidos) e eliminação de código morto/duplicado (princípio DRY).
+
+4. **Desvio ou erro encontrado + causa técnica:** 
+
+Ao submeter o CRUD refatorado ao lote de testes de borda (nomes compostos apenas por espaços `"   "`, horas iguais a `0.0` ou negativas `-2.5`, e strings gigantes ou caracteres especiais), o cadastro de `Projeto` aceitou um nome contendo apenas espaços em branco. *Causa técnica:* a validação verificava apenas `if nome == "":`, que retorna `False` para `"   "` porque a string possui comprimento 3 diferente de zero.
+
+5. **Decisão de ajuste + fonte:** 
+
+Criei uma função única de leitura textual `ler_texto_obrigatorio(prompt)` que aplica `.strip()` antes de validar `if not texto:`, garantindo que nenhuma entidade (`Membro`, `Projeto` ou `Tarefa`) seja instanciada com campos vazios ou compostos apenas por espaços. *Fonte:* Documentação Oficial do Python 3 (*PEP 8 — Style Guide for Python Code* e *Built-in Types — str.strip()*) e MARTIN, Robert C. *Código Limpo* (Capítulo 2 — Nomes Significativos e Capítulo 3 — Funções).
+
+6. **Feedback recebido e o que mudei:** 
+
+Na segunda revisão por pares (Ciclo 12), confirmamos que o código ficou significativamente mais limpo após extrair as funções de leitura validada e remover comentários redundantes que apenas repetiam o óbvio (`# incrementa id`), deixando apenas docstrings objetivas nas funções principais.
+
+7. **Próximo passo:** 
+
+Concluir a segunda revisão por pares do CRUD de Felipe Couto Lamar (Campo 05), consolidar a reflexão de evolução conceitual (Campo 07) e finalizar o painel de acompanhamento do Logbook.
 
 ### 🧩 CAMPO 05 — Registro de Revisão por Pares (revisão nº 2)
 
 | | |
 |---|---|
-| **Autor do CRUD revisado** | _nome_ |
-| **Repositório revisado** | _link_ |
-| **Revisor** | _seu nome_ |
-| **Ciclo / data** | _Ciclo 12 · 11/11_ |
+| **Autor do CRUD revisado** | Felipe Couto Lamar |
+| **Repositório revisado** | `[inserir-link-do-repositorio-do-felipe]` |
+| **Revisor** | Heitor França Barboza |
+| **Ciclo / data** | Ciclo 12 · 11/11 |
 
 **5a. AVANÇO DO PROCESSO DE REVISÃO:**
 
 | ETAPA DO PROCESSO | RESPONSÁVEL | PRAZO | STATUS | DESVIO / JUSTIFICATIVA |
 |---|---|---|---|---|
-| 1. _…_ | Revisor / Autor | _DD/MM_ | ☐ Concluída ☐ Em andamento ☐ Com desvio | _…_ |
-| 2. _…_ | Revisor / Autor | _DD/MM_ | ☐ Concluída ☐ Em andamento ☐ Com desvio | _…_ |
-| 3. _…_ | Revisor / Autor | _DD/MM_ | ☐ Concluída ☐ Em andamento ☐ Com desvio | _…_ |
-| 4. _…_ | Revisor / Autor | _DD/MM_ | ☐ Concluída ☐ Em andamento ☐ Com desvio | _…_ |
-| 5. _…_ | Revisor / Autor | _DD/MM_ | ☐ Concluída ☐ Em andamento ☐ Com desvio | _…_ |
+| 1. Verificação das correções aplicadas após a Revisão nº 1 | Revisor | 11/11 | ☑ Concluída ☐ Em andamento ☐ Com desvio | Autor corrigiu o tratamento de `ValueError` no menu principal e a mensagem de ID inexistente. |
+| 2. Teste de estresse com casos de borda (entradas vazias, espaços, números negativos e zero) | Revisor | 11/11 | ☐ Concluída ☐ Em andamento ☑ Com desvio | Desvio detectado: campos textuais aceitavam strings compostas apenas por espaços (`"   "`) por ausência de `.strip()`. |
+| 3. Avaliação de modularização, escopo de variáveis e legibilidade (PEP 8) | Revisor | 11/11 | ☑ Concluída ☐ Em andamento ☐ Com desvio | Código bem dividido em funções, porém com dois blocos repetidos de exibição de cabeçalho que podem ser extraídos. |
+| 4. Teste de integridade referencial e mutação de listas em exclusões | Revisor | 11/11 | ☑ Concluída ☐ Em andamento ☐ Com desvio | Exclusões funcionaram corretamente sem pular elementos durante iteração. |
+| 5. Devolutiva final de qualidade e registro de rastreabilidade | Revisor / Autor | 11/11 | ☑ Concluída ☐ Em andamento ☐ Com desvio | Relatório entregue com sugestões pontuais de sanitização e refatoração DRY. |
 
 **5b. ANÁLISE DE INSUMOS E CRITÉRIOS DE QUALIDADE:**
 
 | RECURSO | QTDE PLANEJADA | QTDE UTILIZADA | VARIAÇÃO | JUSTIFICATIVA TÉCNICA |
 |---|---|---|---|---|
-| _…_ | _…_ | _…_ | _…_ | _…_ |
-| _…_ | _…_ | _…_ | _…_ | _…_ |
-| _…_ | _…_ | _…_ | _…_ | _…_ |
+| Casos de teste de borda (vazio, espaços, negativos, tipos inválidos) | 8 casos | 9 casos | +1 caso | Incluído teste específico de string com múltiplos espaços em branco após observar ausência de `.strip()`. |
+| Checklist de qualidade de código (PEP 8, DRY, escopo) | 1 checklist | 1 checklist | 0 | Avaliação sistemática de nomes de variáveis, tamanho de funções e ausência de variáveis globais mutadas sem controle. |
+| Repositório GitHub do colega (histórico de commits) | 1 repositório | 1 repositório | 0 | Conferência da evolução entre o commit do Ciclo 09 e o commit refatorado do Ciclo 12. |
 
 **5c. CONTROLE DE QUALIDADE:**
-- **Critério ou norma técnica:** _…_
-- **A solução atende?** ☐ Sim ☐ Parcialmente ☐ Não
+- **Critério ou norma técnica:** Qualidade estrutural de código (PEP 8, modularização, ausência de duplicação) e resiliência a casos de borda e entradas inválidas (sanitização de strings e validação de domínio numérico).
+- **A solução atende?** ☑ Sim ☐ Parcialmente ☐ Não
 
 **5d. GESTÃO DE RISCOS:**
-- **Risco:** _…_
-- **Estratégia de mitigação:** _…_
+- **Risco:** Regressão funcional após a refatoração do colega (funções que funcionavam no Ciclo 09 quebrarem ao serem modularizadas no Ciclo 12).
+- **Estratégia de mitigação:** Reexecutar integralmente os 6 cenários funcionais da Revisão nº 1 antes de aplicar os novos testes de borda.
 
 **5e. RASTREABILIDADE DAS DECISÕES TÉCNICAS — COM VÍNCULO AO CONTEÚDO:**
 
 | DATA | DECISÃO TÉCNICA | RESP. | OBJETO DE CONHECIMENTO MOBILIZADO | FUNDAMENTAÇÃO / REFERÊNCIA |
 |---|---|---|---|---|
-| _DD/MM/AA_ | _…_ | _…_ | _…_ | _…_ |
-| _DD/MM/AA_ | _…_ | _…_ | _…_ | _…_ |
-| _DD/MM/AA_ | _…_ | _…_ | _…_ | _…_ |
-| _DD/MM/AA_ | _…_ | _…_ | _…_ | _…_ |
-| _DD/MM/AA_ | _…_ | _…_ | _…_ | _…_ |
+
+| 11/11/2026 | Recomendar sanitização com `.strip()` antes de validar strings vazias nos cadastros | Heitor Barboza | Manipulação de strings (`str.strip()`) e validação de entrada | Documentação Oficial do Python 3 (*Built-in Types — str.strip()*) — impede registros compostos apenas por whitespace. |
+
+| 11/11/2026 | Recomendar validação de domínio numérico (`valor <= 0`) em campos quantitativos | Heitor Barboza | Operadores relacionais e cláusulas de guarda condicionais | DOWNEY, Allen B. *Pense em Python* (Cap. 5 — Condicionais) — garante invariantes de domínio antes da persistência. |
+
+| 11/11/2026 | Recomendar extração de blocos repetidos de formatação de saída para função auxiliar | Heitor Barboza | Modularização, funções e princípio DRY (*Don't Repeat Yourself*) | MARTIN, Robert C. *Código Limpo* (Cap. 3 — Funções) — reduz duplicação e facilita manutenção. |
+
+| 11/11/2026 | Validar que funções de busca retornam `None` explícito em vez de imprimir erro diretamente dentro da busca | Heitor Barboza | Separação de responsabilidades (lógica de negócio vs. I/O) e retorno de funções | DOWNEY, Allen B. *Pense em Python* (Cap. 6 — Funções com resultado) — aumenta reusabilidade das funções. |
+
+| 11/11/2026 | Recomendar padronização de identificadores de funções e variáveis em `snake_case` | Heitor Barboza | Convenções de estilo e legibilidade de código (PEP 8) | Documentação Oficial do Python 3 (*PEP 8 — Naming Conventions*). |
+
+---
 
 ### 🧩 CAMPO 07 — Evolução conceitual
 *AV Qualis — Grupo 3 | Individual | Quinta 26/11, 23h59*
@@ -959,30 +1170,46 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 
 **7a. O que eu pensava no início do ciclo (com base no Campo 01 — registrar a hipótese inicial e os objetos de conhecimento que achava conhecer):**
 
-> _…_
+> No início do ciclo (Campo 01), eu já conhecia a sintaxe básica do Python, listas e estruturas simples, e minha hipótese inicial era que as falhas do CRUD aconteciam apenas porque `gerar_id()` usava `len(lista) + 1` e faltava validar se os IDs existiam antes de cadastrar uma tarefa. Eu achava que bastaria trocar `len()` por `max()` e colocar alguns `if` pontuais para resolver todos os bugs, sem perceber ainda como mutabilidade de listas, aliasing de referência, precedência de operadores lógicos e escopo de funções afetavam o sistema inteiro.
 
 **7b. O que aprendi — conceitos, princípios ou relações técnicas que não dominava no início e que agora consigo explicar com precisão (mínimo 3 objetos de conhecimento):**
 
 | OBJETO DE CONHECIMENTO | O QUE EU NÃO DOMINAVA | O QUE APRENDI E CONSIGO DEMONSTRAR | EVIDÊNCIA (campo do Logbook onde aparece) |
 |---|---|---|---|
-| _…_ | _…_ | _…_ | _…_ |
-| _…_ | _…_ | _…_ | _…_ |
-| _…_ | _…_ | _…_ | _…_ |
+
+| **Controle de estado e integridade referencial em memória** | Achava que chaves primárias podiam ser derivadas dinamicamente do tamanho da lista (`len() + 1`) ou do maior ID atual (`max()`), e não controlava exclusões com dependentes. | Aprendi que chaves primárias exigem contadores monotônicos independentes e que a exclusão de entidades-pai (`Membro`, `Projeto`) exige verificação de dependência (`any()`) para evitar referências órfãs. | Campo 02 (2a/2b), Campo 03 (3a/3c) e Registro do Ciclo 09. |
+
+| **Mutabilidade, aliasing e iteração segura sobre listas** | Não percebia que atribuir `lista_b = lista_a` cria dois ponteiros para o mesmo objeto na memória, nem que remover itens durante um `for` desloca índices e pula elementos. | Aprendi a usar `sorted()` em vez de `.sort()` quando preciso preservar a ordem original e a reconstruir listas filtradas com *list comprehension* (`tarefas[:] = [...]`) sem mutar coleções durante a iteração. | Registro do Ciclo 06 (devolutiva P1), Ciclo 07 (item 4) e Ciclo 09 (item 4). |
+
+| **Modularização, escopo (LEGB) e separação de responsabilidades** | Concentrava leitura (`input()`), regra de negócio e exibição (`print()`) em blocos longos e alterava variáveis globais diretamente dentro das funções. | Aprendi a isolar entradas validadas (`ler_inteiro()`), consultas puras com retorno explícito (`localizar_por_id() -> Optional[...]`) e funções de domínio coesas, respeitando o escopo local/global do Python. | Registro do Ciclo 10 (itens 3, 4 e 5) e Ciclo 12. |
+
+| **Dicionários (`dict`), normalização e complexidade de busca** | Tratava buscas sempre por varredura linear sensível a maiúsculas/minúsculas e sem checar incompatibilidade entre `str` e `int`. | Aprendi a normalizar strings com `.strip().lower()`, garantir tipagem na entrada e usar dicionários (`chave → valor` e `.get()`) para despachar menus e agregar métricas com acesso direto. | Registro do Ciclo 08 (itens 3, 4 e 5) e Campo 06 (6c). |
 
 **7c. Conceitos que precisei corrigir ao longo do ciclo — onde eu estava equivocado e o que o corrigiu (Fechamento Teórico, pesquisa, Peer Review, arguição):**
 
-1. **Equívoco:** _…_ — **Correção:** _…_
-   **O que corrigiu:** _…_
-2. **Equívoco:** _…_ — **Correção:** _…_
-   **O que corrigiu:** _…_
+1. **Equívoco:** 
+
+Acreditar que `lista_ordenada = tarefas` criava uma cópia independente da lista para ordenação e que remover itens dentro de um laço `for item in lista:` removia todos os elementos correspondentes. — **Correção:** Compreendi o conceito de *aliasing* (referência compartilhada na memória) e o deslocamento de índices durante a mutação de listas, passando a usar `sorted()` para cópias ordenadas e *list comprehensions* para filtragem segura.  
+
+   **O que corrigiu:** 
+   
+   Devolutiva da P1 (registrada no Ciclo 06) combinada com testes práticos no Ciclo 07 e leitura do capítulo de Listas em *Pense em Python* (Cap. 10).
+
+2. **Equívoco:** 
+
+Achar que substituir `len(lista) + 1` por `max(item.id) + 1` resolveria definitivamente a colisão de chaves primárias e que comparar `Enum` diretamente com `str` funcionaria em expressões lógicas compostas sem parênteses. — **Correção:** Percebi que `max()` falha em listas vazias e reutiliza IDs quando o último item é apagado, que `Enum` exige `.value` na comparação com strings e que `and` tem precedência sobre `or`, exigindo parênteses explícitos.  
+
+   **O que corrigiu:** 
+   
+   Testes de borda no Ciclo 03 e Ciclo 05, pesquisa na Documentação Oficial do Python 3 (*Operator precedence* e *Built-in Functions*) e revisão crítica registrada no Campo 03 e Campo 04.
 
 **7d. Transferência — como este aprendizado se aplica a um contexto diferente do problema trabalhado (ao menos 1 exemplo concreto da área de formação):**
 
-> _…_
+> No contexto de **Sistemas de Informação**, exatamente os mesmos princípios de integridade referencial, validação de invariantes e indexação por chave se aplicam ao desenvolvimento de **APIs REST e bancos de dados relacionais** (por exemplo, um sistema acadêmico de matrículas ou um módulo de faturamento hospitalar). Assim como no meu CRUD foi necessário impedir a exclusão de um `Membro` que possuía `Tarefa` vinculada (`RESTRICT` / `ON DELETE NO ACTION`), em sistemas corporativos com PostgreSQL ou SQLAlchemy a camada de serviço precisa validar chaves estrangeiras, sanitizar payloads JSON antes da persistência e usar transações atômicas e índices hash/B-Tree para evitar inconsistência de dados e gargalos de consulta em produção.
 
 **7e. Avaliação honesta do próprio percurso — o que ainda não domino e preciso aprofundar após este ciclo:**
 
-> _…_
+> Embora hoje eu domine a construção de um CRUD estruturado e modularizado em memória, ainda preciso aprofundar três frentes técnicas na sequência do curso: (1) **persistência real em disco e bancos de dados** (serialização em JSON, arquivos CSV e SQLite com SQL), para que o estado do sistema sobreviva ao encerramento do processo; (2) **Programação Orientada a Objetos avançada** (encapsulamento de regras dentro das próprias classes `Membro`, `Projeto` e `Tarefa`, em vez de mantê-las apenas em funções procedurais externas); e (3) **testes automatizados unitários** com `pytest` para substituir a verificação manual por suítes reproduzíveis de regressão.
 
 ---
 
@@ -1062,4 +1289,3 @@ Cada ciclo tem sua própria seção abaixo, já com o modelo. Se precisar de esp
 3. **Priorize a ordem dos grupos:** Grupo 1 (16/11) → Defesa (18/11) → Grupo 2 (21/11) → Grupo 3 (26/11). Dentro de cada grupo, os Campos vêm antes dos Registros.
 4. **Use o histórico do Git** (`git log --oneline`) para reconstruir o que fez em cada ciclo — ele é uma evidência melhor que a memória.
 5. **Fale com o professor** antes do prazo, não depois.
-
