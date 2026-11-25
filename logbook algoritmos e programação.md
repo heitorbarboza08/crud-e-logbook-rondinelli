@@ -127,7 +127,7 @@ Atualize a cada commit (troque ⬜ por ✅).
 | 3 | Campo 05 — Revisão por pares nº 1 e nº 2 | 26/11 | ✅ | ✅ |
 | 3 | Campo 06 — Próximos passos | 26/11 | ✅ | ✅ |
 | 3 | Campo 07 — Evolução conceitual | 26/11 | ✅ | ✅ |
-| 🏁 | Defesa Técnica | 18/11 | ⬜ | — |
+| 🏁 | Defesa Técnica | 18/11 | ✅ | — |
 
 ---
 
