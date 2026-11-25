@@ -1275,10 +1275,23 @@ Achar que substituir `len(lista) + 1` por `max(item.id) + 1` resolveria definiti
 </details>
 
 ### Registro do Encerramento — 18/11
-1. **O que apresentei/defendi (em 1 frase):** _…_
-2. **Objeto(s) de conhecimento que a banca mais explorou:** _…_
-3. **Pergunta que mais me desafiou e como respondi:** _…_
-4. **O que levo deste semestre para o próximo módulo:** _…_
+1. **O que apresentei/defendi (em 1 frase):**
+
+Apresentei a arquitetura e o desenvolvimento de um sistema CRUD de gestão de tarefas via CLI em Python, projetado para unificar o controle de equipe (membros), escopo (projetos) e execução (tarefas) através de modelagem orientada a objetos e repositórios em memória.
+
+2. **Objeto(s) de conhecimento que a banca mais explorou:**
+
+Estruturas de dados e modelagem em Python (uso de dataclasses e Enum para tipagem e estados), manipulação de listas e programação funcional aplicada a relatórios (list comprehension, map, lambda e slicing), além da lógica de vinculação por IDs e integridade relacional em memória.
+
+3. **Pergunta que mais me desafiou e como respondi:**
+
+Pergunta: Como garantir a integridade dos dados e evitar estados inválidos ou registros "órfãos" sem o uso de um banco de dados real?
+
+Resposta: Expliquei que, para evitar validações manuais complexas com múltiplos ifs aninhados, utilizei dataclasses para tipagem e Enums para restringir as tarefas apenas a estados pré-validados. Também destaquei que, embora o MVP utilize listas em memória sujeitas à volatilidade e à falta de exclusão em cascata, a lógica de vinculação via IDs sequenciais já foi estruturada espelhando a mecânica de bancos relacionais para facilitar a futura migração.
+
+4. **O que levo deste semestre para o próximo módulo:**
+
+Levo o domínio da modularização de código (separando gestão, interface e relatórios), a aplicação prática de recursos nativos do Python para escrever códigos mais limpos e com menos boilerplate, e a base arquitetural necessária para dar o próximo passo: integrar o sistema a um banco de dados relacional para garantir persistência e evoluir o motor lógico para uma API RESTful.
 
 ---
 
